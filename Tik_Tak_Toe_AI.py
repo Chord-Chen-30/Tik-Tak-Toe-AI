@@ -1,21 +1,18 @@
 import random
 import copy
+import time
 
 class Tik_Tak_Toe:
     
     def __init__(self):
-        self.iterations = 10000
+        self.iterations = 100000
         self.alpha = 1.0 #?
         self.epsilon = 0.5
         self.qvalues = {}
         self.chessboard = [[0,0,0],
                            [0,0,0],
                            [0,0,0]]
-        self.computerid = 1
-        self.opponentid = 2
 
-        self.wincounts = 0
-        self.losecounts = 0
     
     """Mehtod refer to training"""
     # PLAYER = 1
@@ -177,6 +174,57 @@ class Tik_Tak_Toe:
         print("Tie: ", TEST_EPISODES - wincounts - losecounts)
 
 
+    def testAgainstHuman(self):
+        TEST_EPISODES = 100
+        wincounts = 0
+        losecounts = 0
+
+        for i in range(TEST_EPISODES):
+            print("Round: ", i)
+            self.resetChessBoard()
+            self.showChessBoard()
+            while True:
+                stepByHuman = input("Choose a postion: 1~9\n")
+
+                postion = ((int(stepByHuman)-1)//3,(int(stepByHuman)-1)%3)
+                while postion not in self.getAvailableSteps():
+                    print("Are you serious? :(")
+                    stepByHuman = input("Choose a postion: 1~9\n")
+                    postion = ((int(stepByHuman)-1)//3,(int(stepByHuman)-1)%3)
+
+                self.setStep(postion, 2)
+                self.showChessBoard()
+
+                if self.isWinningState(player=2):
+                    # Last step is a terrible step
+                    # self.showChessBoard()
+                    print("AI Loses !")
+                    self.showChessBoard()
+                    losecounts += 1
+                    break
+                
+                # AI's turn
+                # self.showChessBoard()
+                step = self.computeStepFromQValues(self.chessboard)
+                
+                print("---AI step :",step)
+                time.sleep(2)
+                if not step:
+                    # print(self.chessboard)
+                    self.showChessBoard()
+                    print("AI finds Tie !")
+                    break
+                self.setStep(step, 1)
+
+                # print("--after AI step: ")
+                self.showChessBoard()
+
+
+                if self.isWinningState(player=1):
+                    self.showChessBoard()
+                    print("AI wins !")
+                    wincounts += 1
+                    break
 
     """Method refer to Q learning"""
     # ACTION should be tuples
@@ -239,7 +287,7 @@ class Tik_Tak_Toe:
         #     print(old_qvalue)
         V = self.computeValueFromQValues(nextState)
         # Remove the use of discount
-        new_qvalue = (1-self.alpha)*old_qvalue + self.alpha*(reward + V)
+        new_qvalue = (1-self.alpha)*old_qvalue + self.alpha*(reward + 0.9*V)
         self.qvalues[(state, action)] = new_qvalue
 
 
@@ -309,7 +357,8 @@ def main():
 
     print("qvalues learned: ", length)
     
-    AI.test()
+    # AI.test()
+    AI.testAgainstHuman()
 
 
 if __name__ == '__main__':
