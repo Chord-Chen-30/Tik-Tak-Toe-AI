@@ -7,7 +7,7 @@ class Tik_Tak_Toe:
     def __init__(self):
         self.iterations = 200000
         self.alpha = 0.2 #?
-        self.epsilon = 0.3
+        self.epsilon = 0.1
         self.qvalues = {}
         self.chessboard = [[0,0,0],
                            [0,0,0],
@@ -45,7 +45,7 @@ class Tik_Tak_Toe:
             if i % 10000 == 0:
                 print("\rI'm learning... :", int(i/self.iterations*100),"%\t", end="")
 
-            self.alpha *= ((self.iterations - i) / self.iterations)**0.2
+            # self.alpha *= ((self.iterations - i) / self.iterations)**0.5
             self.resetChessBoard()
             # print("iteration %d", i)
             # Within one round do until some one wins
@@ -88,15 +88,15 @@ class Tik_Tak_Toe:
                     # self.showChessBoard()
                     # print("no action to take")
                     # print("updating: stateBeforeAction2",stateBeforeAction2)
-                    self.updateQValues(stateBeforeAction1, last_step1, stateAfterAction2, -0.1)
-                    self.updateQValues(stateBeforeAction2, last_step2, stateAfterAction2, -0.1)
+                    self.updateQValues(stateBeforeAction1, last_step1, stateAfterAction1, 0.5)
+                    self.updateQValues(stateBeforeAction2, last_step2, stateAfterAction2, 0.5)
                     # print("Tie !")
                     break
 
                 # print("--after AI step: ")
                 # self.showChessBoard()
                 if self.isWinningState(player=1):
-                    self.updateQValues(stateBeforeAction1, step1, stateAfterAction2, -1.0)
+                    self.updateQValues(stateBeforeAction1, step1, stateAfterAction1, -1.0)
                     self.updateQValues(stateBeforeAction2, step2, stateAfterAction2, 1.0)
                     # self.showChessBoard()
                     # print("AI wins !")
@@ -124,8 +124,8 @@ class Tik_Tak_Toe:
                     # self.showChessBoard()
                     # print("no action to take")
                     # print("updating: stateBeforeAction1",stateBeforeAction1)
-                    self.updateQValues(stateBeforeAction1, last_step1, stateAfterAction2, -0.1)
-                    self.updateQValues(stateBeforeAction2, last_step2, stateAfterAction2, -0.1)
+                    self.updateQValues(stateBeforeAction1, last_step1, stateAfterAction1, 0.5)
+                    self.updateQValues(stateBeforeAction2, last_step2, stateAfterAction2, 0.5)
                     # print("Tie !")
                     break
 
